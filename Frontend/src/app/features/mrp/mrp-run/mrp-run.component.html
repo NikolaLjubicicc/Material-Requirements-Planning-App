@@ -15,18 +15,10 @@
     <mat-card class="summary-card">
       <mat-card-header>
         <mat-card-title>Rezultat MRP kalkulacije</mat-card-title>
-        <mat-card-subtitle>Plan #{{result.productionPlanId}} - {{result.productionPlanItem}}</mat-card-subtitle>
+        <mat-card-subtitle>Plan #{{result.productionPlanId}} - {{result.itemSku}} - {{result.itemName}}</mat-card-subtitle>
       </mat-card-header>
       <mat-card-content>
         <div class="summary-grid">
-          <div class="summary-item">
-            <span class="label">Potrebna količina</span>
-            <span class="value">{{result.requiredQuantity}}</span>
-          </div>
-          <div class="summary-item">
-            <span class="label">Rok</span>
-            <span class="value">{{result.dueDate}}</span>
-          </div>
           <div class="summary-item">
             <span class="label">Ukupno naloga</span>
             <span class="value total">{{result.totalOrdersGenerated}}</span>
@@ -40,19 +32,19 @@
             <span class="value production">{{result.productionOrdersCount}}</span>
           </div>
           <div class="summary-item">
-            <span class="label">Kalkulisano</span>
-            <span class="value">{{result.calculatedAt}}</span>
+            <span class="label">Status</span>
+            <span class="value">{{result.status}}</span>
           </div>
         </div>
       </mat-card-content>
     </mat-card>
 
-    <mat-card class="orders-card" *ngIf="result.plannedOrders.length > 0">
+    <mat-card class="orders-card" *ngIf="result.orders && result.orders.length > 0">
       <mat-card-header>
         <mat-card-title>Generisani planirani nalozi</mat-card-title>
       </mat-card-header>
       <mat-card-content>
-        <table mat-table [dataSource]="result.plannedOrders" class="full-width">
+        <table mat-table [dataSource]="result.orders" class="full-width">
           <ng-container matColumnDef="itemSku">
             <th mat-header-cell *matHeaderCellDef>SKU</th>
             <td mat-cell *matCellDef="let order">{{order.itemSku}}</td>

@@ -10,7 +10,7 @@ export interface BomItem {
 }
 
 export interface BomItemCreateRequest {
-  parentId: number;
-  componentId: number;
+  parentItemId: number;
+  componentItemId: number;
   quantity: number;
 }

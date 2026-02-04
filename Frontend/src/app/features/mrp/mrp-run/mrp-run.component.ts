@@ -49,6 +49,7 @@ export class MrpRunComponent implements OnInit {
 
     this.mrpService.runMrp(planId).subscribe({
       next: (result) => {
+        console.log('MRP Result from backend:', result);
         this.result = result;
         this.loading = false;
         this.notificationService.success(`MRP završen! Generisano ${result.totalOrdersGenerated} naloga.`);

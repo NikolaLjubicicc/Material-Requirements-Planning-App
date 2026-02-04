@@ -2,12 +2,11 @@ import { PlannedOrder } from './planned-order.model';
 
 export interface MrpResult {
   productionPlanId: number;
-  productionPlanItem: string;
-  requiredQuantity: number;
-  dueDate: string;
+  itemName: string;
+  itemSku: string;
   totalOrdersGenerated: number;
   purchaseOrdersCount: number;
   productionOrdersCount: number;
-  plannedOrders: PlannedOrder[];
-  calculatedAt: string;
+  orders: PlannedOrder[];
+  status: string;
 }

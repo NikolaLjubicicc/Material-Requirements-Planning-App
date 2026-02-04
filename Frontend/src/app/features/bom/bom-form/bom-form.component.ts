@@ -38,8 +38,8 @@ export class BomFormComponent implements OnInit {
     private router: Router
   ) {
     this.form = this.fb.group({
-      parentId: ['', Validators.required],
-      componentId: ['', Validators.required],
+      parentItemId: ['', Validators.required],
+      componentItemId: ['', Validators.required],
       quantity: [1, [Validators.required, Validators.min(0.01)]]
     });
   }
@@ -53,7 +53,7 @@ export class BomFormComponent implements OnInit {
 
     const data = this.form.value;
 
-    if (data.parentId === data.componentId) {
+    if (data.parentItemId === data.componentItemId) {
       this.notificationService.error('Roditelj i komponenta ne mogu biti isti artikal');
       return;
     }

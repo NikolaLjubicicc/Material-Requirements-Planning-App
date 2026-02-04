@@ -30,6 +30,7 @@ export class ItemFormComponent implements OnInit {
   form: FormGroup;
   isEditMode = false;
   itemId: number | null = null;
+  loading = false;
 
   constructor(
     private fb: FormBuilder,
@@ -68,17 +69,28 @@ export class ItemFormComponent implements OnInit {
   onSubmit(): void {
     if (this.form.invalid) return;
 
+    this.loading = true;
     const data = this.form.value;
 
     if (this.isEditMode && this.itemId) {
-      this.itemService.update(this.itemId, data).subscribe(() => {
-        this.notificationService.success('Artikal uspešno ažuriran');
-        this.router.navigate(['/items']);
+      this.itemService.update(this.itemId, data).subscribe({
+        next: () => {
+          this.notificationService.success('Artikal uspešno ažuriran');
+          this.router.navigate(['/items']);
+        },
+        error: () => {
+          this.loading = false;
+        }
       });
     } else {
-      this.itemService.create(data).subscribe(() => {
-        this.notificationService.success('Artikal uspešno kreiran');
-        this.router.navigate(['/items']);
+      this.itemService.create(data).subscribe({
+        next: () => {
+          this.notificationService.success('Artikal uspešno kreiran');
+          this.router.navigate(['/items']);
+        },
+        error: () => {
+          this.loading = false;
+        }
       });
     }
   }

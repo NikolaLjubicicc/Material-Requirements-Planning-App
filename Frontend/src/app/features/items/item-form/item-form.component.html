@@ -44,9 +44,9 @@
         </mat-form-field>
 
         <div class="actions">
-          <button mat-button type="button" routerLink="/items">Odustani</button>
-          <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid">
-            {{isEditMode ? 'Sačuvaj' : 'Kreiraj'}}
+          <button mat-button type="button" routerLink="/items" [disabled]="loading">Odustani</button>
+          <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid || loading">
+            {{loading ? 'Sačekajte...' : (isEditMode ? 'Sačuvaj' : 'Kreiraj')}}
           </button>
         </div>
       </form>
