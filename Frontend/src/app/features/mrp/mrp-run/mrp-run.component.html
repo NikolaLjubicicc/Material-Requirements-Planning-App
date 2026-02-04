@@ -1,0 +1,109 @@
+<div class="container">
+  <div class="header">
+    <h1>MRP Kalkulacija</h1>
+    <button mat-button routerLink="/mrp">
+      <mat-icon>arrow_back</mat-icon> Nazad
+    </button>
+  </div>
+
+  <div class="loading" *ngIf="loading">
+    <mat-spinner diameter="60"></mat-spinner>
+    <p>Kalkulacija u toku...</p>
+  </div>
+
+  <div *ngIf="result && !loading">
+    <mat-card class="summary-card">
+      <mat-card-header>
+        <mat-card-title>Rezultat MRP kalkulacije</mat-card-title>
+        <mat-card-subtitle>Plan #{{result.productionPlanId}} - {{result.productionPlanItem}}</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="summary-grid">
+          <div class="summary-item">
+            <span class="label">Potrebna količina</span>
+            <span class="value">{{result.requiredQuantity}}</span>
+          </div>
+          <div class="summary-item">
+            <span class="label">Rok</span>
+            <span class="value">{{result.dueDate}}</span>
+          </div>
+          <div class="summary-item">
+            <span class="label">Ukupno naloga</span>
+            <span class="value total">{{result.totalOrdersGenerated}}</span>
+          </div>
+          <div class="summary-item">
+            <span class="label">Nalozi za nabavku</span>
+            <span class="value purchase">{{result.purchaseOrdersCount}}</span>
+          </div>
+          <div class="summary-item">
+            <span class="label">Nalozi za proizvodnju</span>
+            <span class="value production">{{result.productionOrdersCount}}</span>
+          </div>
+          <div class="summary-item">
+            <span class="label">Kalkulisano</span>
+            <span class="value">{{result.calculatedAt}}</span>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="orders-card" *ngIf="result.plannedOrders.length > 0">
+      <mat-card-header>
+        <mat-card-title>Generisani planirani nalozi</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <table mat-table [dataSource]="result.plannedOrders" class="full-width">
+          <ng-container matColumnDef="itemSku">
+            <th mat-header-cell *matHeaderCellDef>SKU</th>
+            <td mat-cell *matCellDef="let order">{{order.itemSku}}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="itemName">
+            <th mat-header-cell *matHeaderCellDef>Naziv</th>
+            <td mat-cell *matCellDef="let order">{{order.itemName}}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="orderType">
+            <th mat-header-cell *matHeaderCellDef>Tip</th>
+            <td mat-cell *matCellDef="let order">
+              <span [class]="'order-type order-' + order.orderType.toLowerCase()">
+                {{order.orderType === 'PURCHASE' ? 'Nabavka' : 'Proizvodnja'}}
+              </span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="quantity">
+            <th mat-header-cell *matHeaderCellDef>Količina</th>
+            <td mat-cell *matCellDef="let order">{{order.quantity}}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="startDate">
+            <th mat-header-cell *matHeaderCellDef>Početak</th>
+            <td mat-cell *matCellDef="let order">{{order.startDate}}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="dueDate">
+            <th mat-header-cell *matHeaderCellDef>Rok</th>
+            <td mat-cell *matCellDef="let order">{{order.dueDate}}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef>Status</th>
+            <td mat-cell *matCellDef="let order">{{order.status}}</td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="orderColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: orderColumns;"></tr>
+        </table>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <mat-card *ngIf="error" class="error-card">
+    <mat-card-content>
+      <mat-icon color="warn">error</mat-icon>
+      <p>{{error}}</p>
+      <button mat-raised-button routerLink="/mrp">Nazad na MRP</button>
+    </mat-card-content>
+  </mat-card>
+</div>

@@ -1,0 +1,30 @@
+.container {
+  padding: 24px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.bom-tree {
+  background: transparent;
+}
+
+.node-content {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.quantity {
+  color: #666;
+  font-size: 0.9em;
+}
+
+.no-data {
+  color: #666;
+  font-style: italic;
+}

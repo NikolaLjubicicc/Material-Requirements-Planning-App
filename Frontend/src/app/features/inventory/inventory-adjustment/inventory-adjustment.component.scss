@@ -1,0 +1,44 @@
+.container {
+  padding: 24px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.info-card {
+  margin-bottom: 24px;
+}
+
+.current-state {
+  display: flex;
+  gap: 32px;
+  margin-top: 16px;
+}
+
+.state-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.label {
+  font-size: 0.9em;
+  color: #666;
+}
+
+.value {
+  font-size: 1.5em;
+  font-weight: bold;
+}
+
+.tab-content {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}

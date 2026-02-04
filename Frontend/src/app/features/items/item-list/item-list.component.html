@@ -1,0 +1,79 @@
+<div class="container">
+  <div class="header">
+    <h1>Artikli</h1>
+    <button mat-raised-button color="primary" routerLink="/items/new">
+      <mat-icon>add</mat-icon>
+      Novi artikal
+    </button>
+  </div>
+
+  <mat-card class="filter-card">
+    <mat-card-content>
+      <div class="filters">
+        <mat-form-field>
+          <mat-label>Pretraga po imenu</mat-label>
+          <input matInput [(ngModel)]="searchTerm" (ngModelChange)="applyFilter()">
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>Kategorija</mat-label>
+          <mat-select [(ngModel)]="selectedCategory" (selectionChange)="applyFilter()">
+            <mat-option [value]="null">Sve</mat-option>
+            <mat-option [value]="'RAW_MATERIAL'">Sirovine</mat-option>
+            <mat-option [value]="'SEMI_FINISHED'">Poluproizvodi</mat-option>
+            <mat-option [value]="'FINISHED_PRODUCT'">Gotovi proizvodi</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <table mat-table [dataSource]="filteredItems" class="full-width mat-elevation-z2">
+    <ng-container matColumnDef="sku">
+      <th mat-header-cell *matHeaderCellDef>SKU</th>
+      <td mat-cell *matCellDef="let item">{{item.sku}}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef>Naziv</th>
+      <td mat-cell *matCellDef="let item">{{item.name}}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="category">
+      <th mat-header-cell *matHeaderCellDef>Kategorija</th>
+      <td mat-cell *matCellDef="let item">{{getCategoryLabel(item.category)}}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="unitOfMeasure">
+      <th mat-header-cell *matHeaderCellDef>JM</th>
+      <td mat-cell *matCellDef="let item">{{item.unitOfMeasure}}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="leadTimeDays">
+      <th mat-header-cell *matHeaderCellDef>Lead Time</th>
+      <td mat-cell *matCellDef="let item">{{item.leadTimeDays}} dana</td>
+    </ng-container>
+
+    <ng-container matColumnDef="safetyStock">
+      <th mat-header-cell *matHeaderCellDef>Sig. zaliha</th>
+      <td mat-cell *matCellDef="let item">{{item.safetyStock}}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef>Akcije</th>
+      <td mat-cell *matCellDef="let item">
+        <button mat-icon-button [routerLink]="['/items', item.id]" matTooltip="Detalji">
+          <mat-icon>visibility</mat-icon>
+        </button>
+        <button mat-icon-button [routerLink]="['/items', item.id, 'edit']" matTooltip="Izmeni">
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button mat-icon-button color="warn" (click)="deleteItem(item)" matTooltip="Obriši">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+</div>

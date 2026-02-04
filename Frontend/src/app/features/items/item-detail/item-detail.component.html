@@ -1,0 +1,80 @@
+<div class="container" *ngIf="item">
+  <div class="header">
+    <h1>{{item.name}}</h1>
+    <div>
+      <button mat-button routerLink="/items">
+        <mat-icon>arrow_back</mat-icon> Nazad
+      </button>
+      <button mat-raised-button color="primary" [routerLink]="['/items', item.id, 'edit']">
+        <mat-icon>edit</mat-icon> Izmeni
+      </button>
+    </div>
+  </div>
+
+  <div class="cards-grid">
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>Osnovni podaci</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <mat-list>
+          <mat-list-item>
+            <span matListItemTitle>SKU</span>
+            <span matListItemLine>{{item.sku}}</span>
+          </mat-list-item>
+          <mat-list-item>
+            <span matListItemTitle>Kategorija</span>
+            <span matListItemLine>{{getCategoryLabel(item.category)}}</span>
+          </mat-list-item>
+          <mat-list-item>
+            <span matListItemTitle>Jedinica mere</span>
+            <span matListItemLine>{{item.unitOfMeasure}}</span>
+          </mat-list-item>
+          <mat-list-item>
+            <span matListItemTitle>Lead Time</span>
+            <span matListItemLine>{{item.leadTimeDays}} dana</span>
+          </mat-list-item>
+          <mat-list-item>
+            <span matListItemTitle>Sigurnosna zaliha</span>
+            <span matListItemLine>{{item.safetyStock}}</span>
+          </mat-list-item>
+        </mat-list>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>Komponente (BOM)</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <mat-list *ngIf="components.length > 0">
+          <mat-list-item *ngFor="let bom of components">
+            <span matListItemTitle>{{bom.componentItemSku}} - {{bom.componentItemName}}</span>
+            <span matListItemLine>Količina: {{bom.quantity}}</span>
+          </mat-list-item>
+        </mat-list>
+        <p *ngIf="components.length === 0">Nema definisanih komponenti</p>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-button [routerLink]="['/bom/tree', item.id]">
+          <mat-icon>account_tree</mat-icon> Prikaži stablo
+        </button>
+      </mat-card-actions>
+    </mat-card>
+
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>Koristi se u</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <mat-list *ngIf="usedIn.length > 0">
+          <mat-list-item *ngFor="let bom of usedIn">
+            <span matListItemTitle>{{bom.parentItemSku}} - {{bom.parentItemName}}</span>
+            <span matListItemLine>Količina: {{bom.quantity}}</span>
+          </mat-list-item>
+        </mat-list>
+        <p *ngIf="usedIn.length === 0">Ne koristi se kao komponenta</p>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

@@ -1,0 +1,63 @@
+.container {
+  padding: 24px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.order-type {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.85em;
+}
+
+.order-purchase {
+  background: #FFF3E0;
+  color: #E65100;
+}
+
+.order-production {
+  background: #F3E5F5;
+  color: #7B1FA2;
+}
+
+.status-badge {
+  padding: 4px 12px;
+  border-radius: 16px;
+  font-size: 0.85em;
+}
+
+.status-planned {
+  background: #E3F2FD;
+  color: #1565C0;
+}
+
+.status-released {
+  background: #E8F5E9;
+  color: #2E7D32;
+}
+
+.status-in_progress {
+  background: #FFF3E0;
+  color: #E65100;
+}
+
+.status-completed {
+  background: #E8F5E9;
+  color: #2E7D32;
+}
+
+.status-cancelled {
+  background: #FAFAFA;
+  color: #757575;
+}
+
+.empty-card {
+  text-align: center;
+  padding: 48px;
+  color: #666;
+}

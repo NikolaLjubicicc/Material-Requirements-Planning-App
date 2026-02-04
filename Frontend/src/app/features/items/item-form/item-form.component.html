@@ -1,0 +1,55 @@
+<div class="container">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>{{isEditMode ? 'Izmeni artikal' : 'Novi artikal'}}</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <mat-form-field class="full-width">
+          <mat-label>SKU</mat-label>
+          <input matInput formControlName="sku" required>
+          <mat-error *ngIf="form.get('sku')?.hasError('required')">SKU je obavezan</mat-error>
+        </mat-form-field>
+
+        <mat-form-field class="full-width">
+          <mat-label>Naziv</mat-label>
+          <input matInput formControlName="name" required>
+          <mat-error *ngIf="form.get('name')?.hasError('required')">Naziv je obavezan</mat-error>
+        </mat-form-field>
+
+        <mat-form-field class="full-width">
+          <mat-label>Jedinica mere</mat-label>
+          <input matInput formControlName="unitOfMeasure" required>
+          <mat-error *ngIf="form.get('unitOfMeasure')?.hasError('required')">Jedinica mere je obavezna</mat-error>
+        </mat-form-field>
+
+        <mat-form-field class="full-width">
+          <mat-label>Kategorija</mat-label>
+          <mat-select formControlName="category" required>
+            <mat-option value="RAW_MATERIAL">Sirovina</mat-option>
+            <mat-option value="SEMI_FINISHED">Poluproizvod</mat-option>
+            <mat-option value="FINISHED_PRODUCT">Gotov proizvod</mat-option>
+          </mat-select>
+          <mat-error *ngIf="form.get('category')?.hasError('required')">Kategorija je obavezna</mat-error>
+        </mat-form-field>
+
+        <mat-form-field class="full-width">
+          <mat-label>Lead Time (dani)</mat-label>
+          <input matInput type="number" formControlName="leadTimeDays" min="0">
+        </mat-form-field>
+
+        <mat-form-field class="full-width">
+          <mat-label>Sigurnosna zaliha</mat-label>
+          <input matInput type="number" formControlName="safetyStock" min="0">
+        </mat-form-field>
+
+        <div class="actions">
+          <button mat-button type="button" routerLink="/items">Odustani</button>
+          <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid">
+            {{isEditMode ? 'Sačuvaj' : 'Kreiraj'}}
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>

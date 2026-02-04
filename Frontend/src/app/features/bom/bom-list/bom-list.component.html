@@ -1,0 +1,41 @@
+<div class="container">
+  <div class="header">
+    <h1>Sastavnice (BOM)</h1>
+    <button mat-raised-button color="primary" routerLink="/bom/new">
+      <mat-icon>add</mat-icon>
+      Nova sastavnica
+    </button>
+  </div>
+
+  <table mat-table [dataSource]="bomItems" class="full-width mat-elevation-z2">
+    <ng-container matColumnDef="parent">
+      <th mat-header-cell *matHeaderCellDef>Roditelj</th>
+      <td mat-cell *matCellDef="let bom">{{bom.parentItemSku}} - {{bom.parentItemName}}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="component">
+      <th mat-header-cell *matHeaderCellDef>Komponenta</th>
+      <td mat-cell *matCellDef="let bom">{{bom.componentItemSku}} - {{bom.componentItemName}}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="quantity">
+      <th mat-header-cell *matHeaderCellDef>Količina</th>
+      <td mat-cell *matCellDef="let bom">{{bom.quantity}}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef>Akcije</th>
+      <td mat-cell *matCellDef="let bom">
+        <button mat-icon-button [routerLink]="['/bom/tree', bom.parentItemId]" matTooltip="Stablo">
+          <mat-icon>account_tree</mat-icon>
+        </button>
+        <button mat-icon-button color="warn" (click)="deleteBom(bom)" matTooltip="Obriši">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+</div>

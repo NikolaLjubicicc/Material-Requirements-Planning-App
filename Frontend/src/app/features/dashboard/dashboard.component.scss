@@ -1,0 +1,28 @@
+.dashboard-container {
+  padding: 24px;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.stat-card {
+  text-align: center;
+}
+
+.stat-number {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #1976d2;
+}
+
+mat-card-header {
+  justify-content: center;
+}
+
+.quick-actions {
+  margin-top: 32px;
+}

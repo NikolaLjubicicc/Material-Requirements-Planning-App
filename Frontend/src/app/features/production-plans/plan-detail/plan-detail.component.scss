@@ -1,0 +1,40 @@
+.container {
+  padding: 24px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 16px;
+}
+
+.status-pending {
+  color: #E65100;
+}
+
+.status-processing {
+  color: #1565C0;
+}
+
+.status-completed {
+  color: #2E7D32;
+}
+
+.status-cancelled {
+  color: #757575;
+}
+
+.order-purchase {
+  color: #FF9800;
+}
+
+.order-production {
+  color: #9C27B0;
+}

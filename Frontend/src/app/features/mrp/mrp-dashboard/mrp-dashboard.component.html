@@ -1,0 +1,77 @@
+<div class="container">
+  <h1>MRP - Planiranje materijalnih potreba</h1>
+
+  <div class="stats-grid">
+    <mat-card class="stat-card">
+      <mat-card-header>
+        <mat-icon mat-card-avatar>pending_actions</mat-icon>
+        <mat-card-title>Planovi na čekanju</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <p class="stat-number">{{pendingPlans.length}}</p>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="stat-card" routerLink="/mrp/orders">
+      <mat-card-header>
+        <mat-icon mat-card-avatar>list_alt</mat-icon>
+        <mat-card-title>Planirani nalozi</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <p class="stat-link">Pregledaj sve naloge →</p>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <mat-card class="plans-card" *ngIf="pendingPlans.length > 0">
+    <mat-card-header>
+      <mat-card-title>Planovi spremni za MRP kalkulaciju</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <table mat-table [dataSource]="pendingPlans" class="full-width">
+        <ng-container matColumnDef="id">
+          <th mat-header-cell *matHeaderCellDef>ID</th>
+          <td mat-cell *matCellDef="let plan">{{plan.id}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="item">
+          <th mat-header-cell *matHeaderCellDef>Artikal</th>
+          <td mat-cell *matCellDef="let plan">{{plan.itemSku}} - {{plan.itemName}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="quantity">
+          <th mat-header-cell *matHeaderCellDef>Količina</th>
+          <td mat-cell *matCellDef="let plan">{{plan.requiredQuantity}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="dueDate">
+          <th mat-header-cell *matHeaderCellDef>Rok</th>
+          <td mat-cell *matCellDef="let plan">{{plan.dueDate}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>Akcija</th>
+          <td mat-cell *matCellDef="let plan">
+            <button mat-raised-button color="primary" [routerLink]="['/mrp/run', plan.id]">
+              <mat-icon>play_arrow</mat-icon>
+              Pokreni MRP
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card *ngIf="pendingPlans.length === 0" class="empty-card">
+    <mat-card-content>
+      <mat-icon>info</mat-icon>
+      <p>Nema planova na čekanju za MRP kalkulaciju.</p>
+      <button mat-raised-button color="primary" routerLink="/production-plans/new">
+        Kreiraj novi plan
+      </button>
+    </mat-card-content>
+  </mat-card>
+</div>

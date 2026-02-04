@@ -1,0 +1,94 @@
+<div class="container">
+  <div class="header">
+    <h1>Prilagođavanje zalihe</h1>
+    <button mat-button routerLink="/inventory">
+      <mat-icon>arrow_back</mat-icon> Nazad
+    </button>
+  </div>
+
+  <mat-card *ngIf="inventory" class="info-card">
+    <mat-card-header>
+      <mat-card-title>{{inventory.itemSku}} - {{inventory.itemName}}</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="current-state">
+        <div class="state-item">
+          <span class="label">Na stanju:</span>
+          <span class="value">{{inventory.quantityOnHand}}</span>
+        </div>
+        <div class="state-item">
+          <span class="label">Rezervisano:</span>
+          <span class="value">{{inventory.reservedQuantity}}</span>
+        </div>
+        <div class="state-item">
+          <span class="label">Dostupno:</span>
+          <span class="value">{{inventory.availableQuantity}}</span>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="actions-card">
+    <mat-tab-group>
+      <mat-tab label="Prijem (+)">
+        <div class="tab-content">
+          <mat-form-field class="full-width">
+            <mat-label>Količina za prijem</mat-label>
+            <input matInput type="number" [(ngModel)]="addQuantity" min="0.01">
+          </mat-form-field>
+          <button mat-raised-button color="primary" (click)="addStock()" [disabled]="!addQuantity || addQuantity <= 0">
+            <mat-icon>add</mat-icon> Primi robu
+          </button>
+        </div>
+      </mat-tab>
+
+      <mat-tab label="Izdavanje (-)">
+        <div class="tab-content">
+          <mat-form-field class="full-width">
+            <mat-label>Količina za izdavanje</mat-label>
+            <input matInput type="number" [(ngModel)]="removeQuantity" min="0.01">
+          </mat-form-field>
+          <button mat-raised-button color="warn" (click)="removeStock()" [disabled]="!removeQuantity || removeQuantity <= 0">
+            <mat-icon>remove</mat-icon> Izdaj robu
+          </button>
+        </div>
+      </mat-tab>
+
+      <mat-tab label="Rezervacija">
+        <div class="tab-content">
+          <mat-form-field class="full-width">
+            <mat-label>Količina za rezervaciju</mat-label>
+            <input matInput type="number" [(ngModel)]="reserveQuantity" min="0.01">
+          </mat-form-field>
+          <button mat-raised-button color="accent" (click)="reserve()" [disabled]="!reserveQuantity || reserveQuantity <= 0">
+            <mat-icon>lock</mat-icon> Rezerviši
+          </button>
+        </div>
+      </mat-tab>
+
+      <mat-tab label="Oslobađanje">
+        <div class="tab-content">
+          <mat-form-field class="full-width">
+            <mat-label>Količina za oslobađanje</mat-label>
+            <input matInput type="number" [(ngModel)]="releaseQuantity" min="0.01">
+          </mat-form-field>
+          <button mat-raised-button (click)="release()" [disabled]="!releaseQuantity || releaseQuantity <= 0">
+            <mat-icon>lock_open</mat-icon> Oslobodi
+          </button>
+        </div>
+      </mat-tab>
+
+      <mat-tab label="Postavi količinu">
+        <div class="tab-content">
+          <mat-form-field class="full-width">
+            <mat-label>Nova količina na stanju</mat-label>
+            <input matInput type="number" [(ngModel)]="setQuantityValue" min="0">
+          </mat-form-field>
+          <button mat-raised-button color="primary" (click)="setQuantity()" [disabled]="setQuantityValue === null || setQuantityValue < 0">
+            <mat-icon>edit</mat-icon> Postavi
+          </button>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  </mat-card>
+</div>

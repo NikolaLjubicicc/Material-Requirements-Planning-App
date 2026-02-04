@@ -1,0 +1,38 @@
+<div class="container">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>Nova zaliha</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <mat-form-field class="full-width">
+          <mat-label>Artikal</mat-label>
+          <mat-select formControlName="itemId" required>
+            <mat-option *ngFor="let item of items" [value]="item.id">
+              {{item.sku}} - {{item.name}}
+            </mat-option>
+          </mat-select>
+          <mat-error>Odaberite artikal</mat-error>
+        </mat-form-field>
+
+        <mat-form-field class="full-width">
+          <mat-label>Količina na stanju</mat-label>
+          <input matInput type="number" formControlName="quantityOnHand" min="0" required>
+          <mat-error>Količina mora biti 0 ili veća</mat-error>
+        </mat-form-field>
+
+        <mat-form-field class="full-width">
+          <mat-label>Rezervisana količina</mat-label>
+          <input matInput type="number" formControlName="reservedQuantity" min="0">
+        </mat-form-field>
+
+        <div class="actions">
+          <button mat-button type="button" routerLink="/inventory">Odustani</button>
+          <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid">
+            Kreiraj
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>

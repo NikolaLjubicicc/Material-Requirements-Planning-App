@@ -1,0 +1,41 @@
+<div class="container">
+  <div class="header">
+    <h1>Stablo sastavnice</h1>
+    <button mat-button routerLink="/bom">
+      <mat-icon>arrow_back</mat-icon> Nazad
+    </button>
+  </div>
+
+  <mat-card *ngIf="rootItem">
+    <mat-card-header>
+      <mat-card-title>{{rootItem.sku}} - {{rootItem.name}}</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <mat-tree [dataSource]="dataSource" [treeControl]="treeControl" class="bom-tree">
+        <mat-tree-node *matTreeNodeDef="let node" matTreeNodePadding>
+          <button mat-icon-button disabled></button>
+          <span class="node-content">
+            <strong>{{node.sku}}</strong> - {{node.name}}
+            <span class="quantity">(×{{node.quantity}})</span>
+          </span>
+        </mat-tree-node>
+
+        <mat-tree-node *matTreeNodeDef="let node; when: hasChild" matTreeNodePadding>
+          <button mat-icon-button matTreeNodeToggle>
+            <mat-icon>
+              {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
+            </mat-icon>
+          </button>
+          <span class="node-content">
+            <strong>{{node.sku}}</strong> - {{node.name}}
+            <span class="quantity">(×{{node.quantity}})</span>
+          </span>
+        </mat-tree-node>
+      </mat-tree>
+
+      <p *ngIf="!dataSource.data.length" class="no-data">
+        Ovaj artikal nema definisanih komponenti.
+      </p>
+    </mat-card-content>
+  </mat-card>
+</div>

@@ -1,0 +1,51 @@
+.container {
+  padding: 24px;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 16px;
+  margin: 24px 0;
+}
+
+.stat-card {
+  cursor: pointer;
+}
+
+.stat-card:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.stat-number {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #1976D2;
+  text-align: center;
+}
+
+.stat-link {
+  color: #1976D2;
+  text-align: center;
+}
+
+.plans-card {
+  margin-top: 24px;
+}
+
+.empty-card {
+  text-align: center;
+  padding: 48px;
+}
+
+.empty-card mat-icon {
+  font-size: 48px;
+  width: 48px;
+  height: 48px;
+  color: #9E9E9E;
+}
+
+.empty-card p {
+  color: #666;
+  margin: 16px 0;
+}
