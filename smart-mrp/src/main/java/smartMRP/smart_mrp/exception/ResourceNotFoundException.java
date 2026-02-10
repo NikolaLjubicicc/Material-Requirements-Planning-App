@@ -1,8 +1,6 @@
 package smartMRP.smart_mrp.exception;
 
-/**
- * Generički exception za sve resurse koji nisu pronađeni.
- */
+
 public class ResourceNotFoundException extends RuntimeException {
 
     public ResourceNotFoundException(String resourceName, Long id) {

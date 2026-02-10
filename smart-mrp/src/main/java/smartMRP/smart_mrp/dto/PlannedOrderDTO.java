@@ -23,7 +23,6 @@ public class PlannedOrderDTO {
 
     public PlannedOrderDTO() {}
 
-    // Konverzija iz Entity u DTO
     public static PlannedOrderDTO fromEntity(PlannedOrder order) {
         PlannedOrderDTO dto = new PlannedOrderDTO();
         dto.setId(order.getId());
@@ -43,7 +42,6 @@ public class PlannedOrderDTO {
         return dto;
     }
 
-    // Getteri i Setteri
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 

@@ -24,7 +24,6 @@ public class InventoryDTO {
 
     public InventoryDTO() {}
 
-    // Konverzija iz Entity u DTO
     public static InventoryDTO fromEntity(Inventory inventory) {
         InventoryDTO dto = new InventoryDTO();
         dto.setId(inventory.getId());
@@ -37,7 +36,6 @@ public class InventoryDTO {
         return dto;
     }
 
-    // Getteri i Setteri
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 

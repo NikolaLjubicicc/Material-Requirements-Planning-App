@@ -41,7 +41,6 @@ public class MrpResultDTO {
         return dto;
     }
 
-    // Getteri i Setteri
     public Long getProductionPlanId() { return productionPlanId; }
     public void setProductionPlanId(Long productionPlanId) { this.productionPlanId = productionPlanId; }
 

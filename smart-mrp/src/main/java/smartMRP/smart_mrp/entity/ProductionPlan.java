@@ -40,11 +40,9 @@ public class ProductionPlan {
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDate createdAt = LocalDate.now();
 
-    // Prazan konstruktor
     public ProductionPlan() {
     }
 
-    // Konstruktor sa svim poljima
     public ProductionPlan(Long id, Item item, Double requiredQuantity,
                           LocalDate dueDate, PlanStatus status, LocalDate createdAt) {
         this.id = id;
@@ -55,7 +53,6 @@ public class ProductionPlan {
         this.createdAt = createdAt;
     }
 
-    // Getteri i Setteri
     public Long getId() {
         return id;
     }

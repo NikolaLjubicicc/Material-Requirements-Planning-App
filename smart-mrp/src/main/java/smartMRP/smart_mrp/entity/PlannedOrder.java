@@ -52,11 +52,9 @@ public class PlannedOrder {
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDate createdAt = LocalDate.now();
 
-    // Prazan konstruktor
     public PlannedOrder() {
     }
 
-    // Konstruktor sa svim poljima
     public PlannedOrder(Long id, Item item, ProductionPlan productionPlan, Double quantity,
                         OrderType orderType, LocalDate startDate, LocalDate dueDate,
                         OrderStatus status, LocalDate createdAt) {
@@ -71,7 +69,6 @@ public class PlannedOrder {
         this.createdAt = createdAt;
     }
 
-    // Getteri i Setteri
     public Long getId() {
         return id;
     }

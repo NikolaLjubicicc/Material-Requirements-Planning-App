@@ -3,9 +3,6 @@ package smartMRP.smart_mrp.dto;
 import java.time.LocalDateTime;
 import java.util.List;
 
-/**
- * Standardizovan format za API greške.
- */
 public class ErrorResponse {
 
     private LocalDateTime timestamp;
@@ -27,7 +24,6 @@ public class ErrorResponse {
         this.path = path;
     }
 
-    // Getteri i Setteri
     public LocalDateTime getTimestamp() {
         return timestamp;
     }
@@ -76,9 +72,6 @@ public class ErrorResponse {
         this.fieldErrors = fieldErrors;
     }
 
-    /**
-     * Greška vezana za specifično polje (validacija).
-     */
     public static class FieldError {
         private String field;
         private String message;

@@ -15,18 +15,16 @@ public class CorsConfig {
     public CorsFilter corsFilter() {
         CorsConfiguration config = new CorsConfiguration();
 
-        // Dozvoli Angular aplikaciju na localhost:4200
+
         config.setAllowedOrigins(Arrays.asList(
                 "http://localhost:4200",
                 "http://127.0.0.1:4200"
         ));
 
-        // Dozvoli sve HTTP metode
         config.setAllowedMethods(Arrays.asList(
                 "GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"
         ));
 
-        // Dozvoli sve headere
         config.setAllowedHeaders(Arrays.asList(
                 "Authorization",
                 "Content-Type",
@@ -35,10 +33,8 @@ public class CorsConfig {
                 "X-Requested-With"
         ));
 
-        // Dozvoli credentials (cookies, authorization headers)
         config.setAllowCredentials(true);
 
-        // Koliko dugo browser može keširati CORS konfiguraciju (1 sat)
         config.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

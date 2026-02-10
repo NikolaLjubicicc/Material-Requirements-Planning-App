@@ -26,7 +26,6 @@ public class BomItemDTO {
 
     public BomItemDTO() {}
 
-    // Konverzija iz Entity u DTO
     public static BomItemDTO fromEntity(BomItem bomItem) {
         BomItemDTO dto = new BomItemDTO();
         dto.setId(bomItem.getId());
@@ -40,7 +39,6 @@ public class BomItemDTO {
         return dto;
     }
 
-    // Getteri i Setteri
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 

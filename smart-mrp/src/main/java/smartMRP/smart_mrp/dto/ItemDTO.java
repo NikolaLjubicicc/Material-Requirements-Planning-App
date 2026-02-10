@@ -30,7 +30,6 @@ public class ItemDTO {
 
     public ItemDTO() {}
 
-    // Konverzija iz Entity u DTO
     public static ItemDTO fromEntity(Item item) {
         ItemDTO dto = new ItemDTO();
         dto.setId(item.getId());
@@ -43,7 +42,6 @@ public class ItemDTO {
         return dto;
     }
 
-    // Konverzija iz DTO u Entity
     public Item toEntity() {
         Item item = new Item();
         item.setId(this.id);
@@ -56,7 +54,6 @@ public class ItemDTO {
         return item;
     }
 
-    // Getteri i Setteri
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 

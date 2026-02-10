@@ -29,11 +29,9 @@ public class Inventory {
     @Column(name = "reserved_quantity", nullable = false)
     private Double reservedQuantity = 0.0;
 
-    // Prazan konstruktor
     public Inventory() {
     }
 
-    // Konstruktor sa svim poljima
     public Inventory(Long id, Item item, Double quantityOnHand, Double reservedQuantity) {
         this.id = id;
         this.item = item;
@@ -41,14 +39,11 @@ public class Inventory {
         this.reservedQuantity = reservedQuantity;
     }
 
-    /**
-     * Vraća dostupnu količinu (na stanju minus rezervisano).
-     */
+
     public Double getAvailableQuantity() {
         return quantityOnHand - reservedQuantity;
     }
 
-    // Getteri i Setteri
     public Long getId() {
         return id;
     }

@@ -97,7 +97,6 @@ public class ProductionPlanService {
             throw new IllegalStateException("Nije moguće obrisati plan koji je u obradi");
         }
 
-        // Obriši sve povezane planirane naloge
         plannedOrderRepository.deleteByProductionPlanId(id);
 
         productionPlanRepository.delete(plan);

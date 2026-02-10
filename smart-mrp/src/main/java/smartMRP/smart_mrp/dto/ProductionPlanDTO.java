@@ -29,7 +29,6 @@ public class ProductionPlanDTO {
 
     public ProductionPlanDTO() {}
 
-    // Konverzija iz Entity u DTO
     public static ProductionPlanDTO fromEntity(ProductionPlan plan) {
         ProductionPlanDTO dto = new ProductionPlanDTO();
         dto.setId(plan.getId());
@@ -43,7 +42,6 @@ public class ProductionPlanDTO {
         return dto;
     }
 
-    // Getteri i Setteri
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 

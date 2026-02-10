@@ -42,11 +42,9 @@ public class Item {
     @Column(name = "safety_stock", nullable = false)
     private Double safetyStock = 0.0;
 
-    // Prazan konstruktor (JPA zahtev)
     public Item() {
     }
 
-    // Konstruktor sa svim poljima
     public Item(Long id, String sku, String name, String unitOfMeasure,
                 ItemCategory category, Integer leadTimeDays, Double safetyStock) {
         this.id = id;
@@ -58,7 +56,6 @@ public class Item {
         this.safetyStock = safetyStock;
     }
 
-    // Getteri i Setteri
     public Long getId() {
         return id;
     }

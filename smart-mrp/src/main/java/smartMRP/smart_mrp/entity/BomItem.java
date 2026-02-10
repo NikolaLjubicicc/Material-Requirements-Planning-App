@@ -34,11 +34,9 @@ public class BomItem {
     @Column(nullable = false)
     private Double quantity;
 
-    // Prazan konstruktor
     public BomItem() {
     }
 
-    // Konstruktor sa svim poljima
     public BomItem(Long id, Item parentItem, Item componentItem, Double quantity) {
         this.id = id;
         this.parentItem = parentItem;
@@ -46,7 +44,6 @@ public class BomItem {
         this.quantity = quantity;
     }
 
-    // Getteri i Setteri
     public Long getId() {
         return id;
     }
