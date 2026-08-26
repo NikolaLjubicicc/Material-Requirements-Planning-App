@@ -309,11 +309,3 @@ GET  /api/bom/parent/{parentId}     - komponente datog artikla
 GET  /api/inventory                 - stanje zaliha
 POST /api/inventory/item/{id}/add   - prijem robe na stanje
 ```
-
-Kompletna specifikacija endpointa, sa primerima request i response tela, nalazi se u [ANGULAR_FRONTEND_INSTRUKCIJE.md](ANGULAR_FRONTEND_INSTRUKCIJE.md). Detaljan opis svakog sloja backenda dat je u [CLAUDE_CONTEXT.md](CLAUDE_CONTEXT.md).
-
----
-
-## 8. Napomena o kodu
-
-Kod ne sadrži komentare - imena klasa, metoda i promenljivih su birana tako da samostalno opisuju svrhu (npr. `explodeBom`, `calculateNetRequirements`, `reserveComponents`), čime je potreba za dodatnim komentarima izbegnuta.
