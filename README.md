@@ -1,6 +1,6 @@
 # Smart MRP
 
-Sistem za planiranje materijalnih potreba (Material Requirements Planning). Ovo je master rad / projekat koji simulira jedan realan proces koji se koristi u proizvodnim firmama: kako da na osnovu plana proizvodnje i trenutnih zaliha automatski izračunaš šta treba naručiti od dobavljača, a šta treba proizvesti u sopstvenoj fabrici, i kada tačno treba krenuti sa tim da bi se stiglo do roka.
+Sistem za planiranje materijalnih potreba (Material Requirements Planning). Ovo je projekat koji simulira jedan realan proces koji se koristi u proizvodnim firmama: kako da na osnovu plana proizvodnje i trenutnih zaliha automatski izračunaš šta treba naručiti od dobavljača, a šta treba proizvesti u sopstvenoj fabrici, i kada tačno treba krenuti sa tim da bi se stiglo do roka.
 
 Aplikacija ima dva dela:
 
