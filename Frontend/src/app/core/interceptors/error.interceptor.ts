@@ -21,10 +21,8 @@ export class ErrorInterceptor implements HttpInterceptor {
         let errorMessage = 'Došlo je do greške';
 
         if (error.error instanceof ErrorEvent) {
-          // Client-side error
           errorMessage = `Greška: ${error.error.message}`;
         } else {
-          // Server-side error
           const apiError = error.error as ApiError;
 
           switch (error.status) {

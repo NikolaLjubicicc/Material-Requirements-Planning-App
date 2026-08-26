@@ -61,7 +61,6 @@ public class ItemService {
     public Item update(Long id, Item updatedItem) {
         Item existingItem = findById(id);
 
-        // Ako se menja SKU, proveri da novi SKU ne postoji
         if (!existingItem.getSku().equals(updatedItem.getSku())
                 && itemRepository.existsBySku(updatedItem.getSku())) {
             throw new DuplicateSkuException(updatedItem.getSku());
@@ -80,7 +79,6 @@ public class ItemService {
     public void delete(Long id) {
         Item item = findById(id);
 
-        // Proveri da li se artikal koristi u BOM-u
         if (bomItemRepository.isItemUsedInBom(id)) {
             throw new ItemInUseException(id);
         }

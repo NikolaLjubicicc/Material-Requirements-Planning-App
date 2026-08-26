@@ -21,16 +21,10 @@ public interface InventoryRepository extends JpaRepository<Inventory, Long> {
 
     boolean existsByItemId(Long itemId);
 
-    /**
-     * Ažurira količinu na stanju za artikal.
-     */
     @Modifying
     @Query("UPDATE Inventory i SET i.quantityOnHand = :quantity WHERE i.item.id = :itemId")
     int updateQuantityOnHand(@Param("itemId") Long itemId, @Param("quantity") Double quantity);
 
-    /**
-     * Ažurira rezervisanu količinu za artikal.
-     */
     @Modifying
     @Query("UPDATE Inventory i SET i.reservedQuantity = :quantity WHERE i.item.id = :itemId")
     int updateReservedQuantity(@Param("itemId") Long itemId, @Param("quantity") Double quantity);

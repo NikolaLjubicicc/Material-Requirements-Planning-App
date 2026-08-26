@@ -15,18 +15,18 @@
 
     <ng-container matColumnDef="quantityOnHand">
       <th mat-header-cell *matHeaderCellDef>Na stanju</th>
-      <td mat-cell *matCellDef="let inv">{{inv.quantityOnHand}}</td>
+      <td mat-cell *matCellDef="let inv">{{inv.quantityOnHand | number:'1.0-3'}}</td>
     </ng-container>
 
     <ng-container matColumnDef="reservedQuantity">
       <th mat-header-cell *matHeaderCellDef>Rezervisano</th>
-      <td mat-cell *matCellDef="let inv">{{inv.reservedQuantity}}</td>
+      <td mat-cell *matCellDef="let inv">{{inv.reservedQuantity | number:'1.0-3'}}</td>
     </ng-container>
 
     <ng-container matColumnDef="availableQuantity">
       <th mat-header-cell *matHeaderCellDef>Dostupno</th>
       <td mat-cell *matCellDef="let inv" [class.low-stock]="isLowStock(inv)">
-        {{inv.availableQuantity}}
+        {{inv.availableQuantity | number:'1.0-3'}}
       </td>
     </ng-container>
 

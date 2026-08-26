@@ -4,10 +4,6 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 
-/**
- * Skladište - trenutno stanje zaliha za artikal.
- * Veza 1-na-1 sa artiklom.
- */
 @Entity
 @Table(name = "inventory")
 public class Inventory {
@@ -38,7 +34,6 @@ public class Inventory {
         this.quantityOnHand = quantityOnHand;
         this.reservedQuantity = reservedQuantity;
     }
-
 
     public Double getAvailableQuantity() {
         return quantityOnHand - reservedQuantity;

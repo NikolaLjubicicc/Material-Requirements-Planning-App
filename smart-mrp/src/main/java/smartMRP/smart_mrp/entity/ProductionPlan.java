@@ -7,10 +7,6 @@ import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
 
-/**
- * Plan proizvodnje.
- * Definiše šta treba proizvesti, u kojoj količini i do kog datuma.
- */
 @Entity
 @Table(name = "production_plans")
 public class ProductionPlan {

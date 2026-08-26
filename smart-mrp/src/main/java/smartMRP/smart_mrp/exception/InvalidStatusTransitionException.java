@@ -2,7 +2,6 @@ package smartMRP.smart_mrp.exception;
 
 import smartMRP.smart_mrp.entity.OrderStatus;
 
-
 public class InvalidStatusTransitionException extends RuntimeException {
 
     private final OrderStatus currentStatus;

@@ -6,7 +6,6 @@ import smartMRP.smart_mrp.entity.OrderType;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class PlannedOrderStatusUpdateResponse {
 
     private Long orderId;
@@ -59,7 +58,6 @@ public class PlannedOrderStatusUpdateResponse {
         return this;
     }
 
-
     public Long getOrderId() { return orderId; }
     public void setOrderId(Long orderId) { this.orderId = orderId; }
 
@@ -82,7 +80,7 @@ public class PlannedOrderStatusUpdateResponse {
     public void setSuccess(boolean success) { this.success = success; }
 
     public static class InventoryOperation {
-        private String operationType;  // RESERVE, ISSUE, RECEIVE, RELEASE
+        private String operationType;
         private Long itemId;
         private String itemSku;
         private String itemName;

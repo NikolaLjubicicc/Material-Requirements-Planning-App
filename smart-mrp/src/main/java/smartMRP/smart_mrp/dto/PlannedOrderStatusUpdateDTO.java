@@ -3,7 +3,6 @@ package smartMRP.smart_mrp.dto;
 import jakarta.validation.constraints.NotNull;
 import smartMRP.smart_mrp.entity.OrderStatus;
 
-
 public class PlannedOrderStatusUpdateDTO {
 
     @NotNull(message = "Novi status je obavezan")

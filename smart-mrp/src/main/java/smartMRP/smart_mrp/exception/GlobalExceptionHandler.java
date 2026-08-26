@@ -11,7 +11,6 @@ import smartMRP.smart_mrp.dto.ErrorResponse;
 import java.util.List;
 import java.util.stream.Collectors;
 
-
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 

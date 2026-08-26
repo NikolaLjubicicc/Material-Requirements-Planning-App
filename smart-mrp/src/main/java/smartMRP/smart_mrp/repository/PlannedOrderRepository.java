@@ -24,41 +24,23 @@ public interface PlannedOrderRepository extends JpaRepository<PlannedOrder, Long
 
     List<PlannedOrder> findByProductionPlanId(Long productionPlanId);
 
-    /**
-     * Pronalazi naloge po tipu i statusu.
-     */
     List<PlannedOrder> findByOrderTypeAndStatus(OrderType orderType, OrderStatus status);
 
-    /**
-     * Pronalazi naloge čiji je startDate u zadatom periodu.
-     */
     @Query("SELECT o FROM PlannedOrder o WHERE o.startDate BETWEEN :startDate AND :endDate ORDER BY o.startDate ASC")
     List<PlannedOrder> findByStartDateBetween(
             @Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate);
 
-    /**
-     * Pronalazi naloge čiji je dueDate u zadatom periodu.
-     */
     @Query("SELECT o FROM PlannedOrder o WHERE o.dueDate BETWEEN :startDate AND :endDate ORDER BY o.dueDate ASC")
     List<PlannedOrder> findByDueDateBetween(
             @Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate);
 
-    /**
-     * Pronalazi sve PLANNED naloge za nabavku (lista za kupovinu).
-     */
     @Query("SELECT o FROM PlannedOrder o WHERE o.orderType = 'PURCHASE' AND o.status = 'PLANNED' ORDER BY o.startDate ASC")
     List<PlannedOrder> findPurchaseOrdersToProcess();
 
-    /**
-     * Pronalazi sve PLANNED naloge za proizvodnju.
-     */
     @Query("SELECT o FROM PlannedOrder o WHERE o.orderType = 'PRODUCTION' AND o.status = 'PLANNED' ORDER BY o.startDate ASC")
     List<PlannedOrder> findProductionOrdersToProcess();
 
-    /**
-     * Briše sve naloge vezane za određeni ProductionPlan.
-     */
     void deleteByProductionPlanId(Long productionPlanId);
 }

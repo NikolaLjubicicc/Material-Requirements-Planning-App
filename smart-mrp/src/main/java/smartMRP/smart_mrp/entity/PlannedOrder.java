@@ -6,10 +6,6 @@ import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
 
-/**
- * Planirani nalog - rezultat MRP kalkulacije.
- * Predstavlja nalog za nabavku ili proizvodnju koji treba izvršiti.
- */
 @Entity
 @Table(name = "planned_orders")
 public class PlannedOrder {

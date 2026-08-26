@@ -48,23 +48,19 @@ public class BomService {
     }
 
     public BomItem create(Long parentId, Long componentId, Double quantity) {
-        // Validacija: roditelj i komponenta moraju postojati
         Item parentItem = itemRepository.findById(parentId)
                 .orElseThrow(() -> new ItemNotFoundException(parentId));
         Item componentItem = itemRepository.findById(componentId)
                 .orElseThrow(() -> new ItemNotFoundException(componentId));
 
-        // Validacija: artikal ne može biti sam sebi komponenta
         if (parentId.equals(componentId)) {
             throw new BomCycleException("Artikal ne može biti sam sebi komponenta");
         }
 
-        // Validacija: proveri cikličnu zavisnost
         if (wouldCreateCycle(parentId, componentId)) {
             throw new BomCycleException(parentId, componentId);
         }
 
-        // Proveri da li već postoji ova veza
         if (bomItemRepository.existsByParentItemAndComponentItem(parentItem, componentItem)) {
             throw new IllegalArgumentException(
                     "Veza između artikla " + parentId + " i komponente " + componentId + " već postoji");
@@ -89,11 +85,6 @@ public class BomService {
         bomItemRepository.delete(bomItem);
     }
 
-    /**
-     * Proverava da li bi dodavanje komponente stvorilo ciklus u BOM-u.
-     * Koristi DFS da proveri da li componentId (ili bilo koji njegov potomak)
-     * već ima parentId kao komponentu.
-     */
     @Transactional(readOnly = true)
     public boolean wouldCreateCycle(Long parentId, Long componentId) {
         Set<Long> visited = new HashSet<>();
@@ -111,7 +102,6 @@ public class BomService {
 
         visited.add(currentId);
 
-        // Pronađi sve komponente trenutnog artikla
         List<BomItem> children = bomItemRepository.findByParentItemId(currentId);
         for (BomItem child : children) {
             if (hasCycle(child.getComponentItem().getId(), targetId, visited)) {
@@ -122,9 +112,6 @@ public class BomService {
         return false;
     }
 
-    /**
-     * Vraća kompletnu hijerarhiju komponenti za dati artikal (rekurzivno).
-     */
     @Transactional(readOnly = true)
     public List<BomItem> getFullBomTree(Long parentId) {
         return bomItemRepository.findByParentItemId(parentId);

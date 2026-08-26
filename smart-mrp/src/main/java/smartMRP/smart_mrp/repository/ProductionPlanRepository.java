@@ -20,22 +20,13 @@ public interface ProductionPlanRepository extends JpaRepository<ProductionPlan, 
 
     List<ProductionPlan> findByItemId(Long itemId);
 
-    /**
-     * Pronalazi planove u zadatom vremenskom periodu.
-     */
     @Query("SELECT p FROM ProductionPlan p WHERE p.dueDate BETWEEN :startDate AND :endDate")
     List<ProductionPlan> findByDueDateBetween(
             @Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate);
 
-    /**
-     * Pronalazi sve PENDING planove sortirane po datumu.
-     */
     @Query("SELECT p FROM ProductionPlan p WHERE p.status = 'PENDING' ORDER BY p.dueDate ASC")
     List<ProductionPlan> findPendingPlansOrderedByDueDate();
 
-    /**
-     * Pronalazi planove po statusu i datumu.
-     */
     List<ProductionPlan> findByStatusAndDueDateBefore(PlanStatus status, LocalDate date);
 }

@@ -8,15 +8,6 @@ import smartMRP.smart_mrp.repository.*;
 import java.time.LocalDate;
 import java.util.*;
 
-/**
- * MRP Engine - Glavni servis za Material Requirements Planning.
- *
- * Proces MRP kalkulacije:
- * 1. Eksplozija (Explosion) - rekurzivno prolazi kroz BOM
- * 2. Netiranje (Netting) - računa neto potrebe uzimajući u obzir zalihe
- * 3. Lead Time Offsetting - računa datume unazad
- * 4. Generisanje naloga - kreira PlannedOrder zapise
- */
 @Service
 @Transactional
 public class MrpService {
@@ -39,60 +30,43 @@ public class MrpService {
         this.itemRepository = itemRepository;
     }
 
-    /**
-     * Pokreće MRP kalkulaciju za jedan ProductionPlan.
-     * Ovo je glavna metoda koja orkestira ceo proces.
-     */
     public MrpResult runMrp(Long productionPlanId) {
         ProductionPlan plan = productionPlanRepository.findById(productionPlanId)
                 .orElseThrow(() -> new IllegalArgumentException(
                         "ProductionPlan sa ID-jem " + productionPlanId + " ne postoji"));
 
-        // Postavi status na PROCESSING
         plan.setStatus(PlanStatus.PROCESSING);
         productionPlanRepository.save(plan);
 
         try {
-            // Obriši prethodne naloge za ovaj plan (ako postoje)
             plannedOrderRepository.deleteByProductionPlanId(productionPlanId);
 
-            // 1. Eksplozija BOM-a - dobijamo sve potrebne komponente sa količinama
             Map<Long, BomRequirement> requirements = new HashMap<>();
             explodeBom(plan.getItem().getId(), plan.getRequiredQuantity(),
                        plan.getDueDate(), requirements);
 
-            // Dodaj i sam glavni artikal ako ima BOM (znači da se proizvodi)
             List<BomItem> mainItemBom = bomItemRepository.findByParentItemId(plan.getItem().getId());
             if (!mainItemBom.isEmpty()) {
-                // Glavni artikal je proizvod koji se sastavlja
                 addRequirement(requirements, plan.getItem().getId(),
                               plan.getRequiredQuantity(), plan.getDueDate());
             }
 
-            // 2. Netiranje - izračunaj neto potrebe
             Map<Long, NetRequirement> netRequirements = calculateNetRequirements(requirements);
 
-            // 3. Lead Time Offsetting + Generisanje naloga
             List<PlannedOrder> generatedOrders = generatePlannedOrders(netRequirements, plan);
 
-            // Postavi status na COMPLETED
             plan.setStatus(PlanStatus.COMPLETED);
             productionPlanRepository.save(plan);
 
             return new MrpResult(plan, generatedOrders, netRequirements.size());
 
         } catch (Exception e) {
-            // Vrati status na PENDING u slučaju greške
             plan.setStatus(PlanStatus.PENDING);
             productionPlanRepository.save(plan);
             throw new RuntimeException("Greška prilikom MRP kalkulacije: " + e.getMessage(), e);
         }
     }
 
-    /**
-     * Rekurzivna eksplozija BOM-a.
-     * Za svaki artikal pronalazi komponente i računa potrebne količine.
-     */
     private void explodeBom(Long itemId, Double quantity, LocalDate dueDate,
                            Map<Long, BomRequirement> requirements) {
 
@@ -102,15 +76,12 @@ public class MrpService {
             Long componentId = bomItem.getComponentItem().getId();
             Double requiredQty = quantity * bomItem.getQuantity();
 
-            // Izračunaj datum potrebe za komponentu (uzimajući u obzir lead time roditelja)
             Item parentItem = itemRepository.findById(itemId).orElse(null);
             int parentLeadTime = (parentItem != null) ? parentItem.getLeadTimeDays() : 0;
             LocalDate componentDueDate = dueDate.minusDays(parentLeadTime);
 
-            // Dodaj potrebu za komponentu
             addRequirement(requirements, componentId, requiredQty, componentDueDate);
 
-            // Rekurzivno eksplodiraj ako komponenta ima svoje komponente
             explodeBom(componentId, requiredQty, componentDueDate, requirements);
         }
     }
@@ -122,7 +93,6 @@ public class MrpService {
                 return new BomRequirement(itemId, quantity, dueDate);
             } else {
                 existing.addQuantity(quantity);
-                // Uzmi raniji datum ako je potrebno ranije
                 if (dueDate.isBefore(existing.getDueDate())) {
                     existing.setDueDate(dueDate);
                 }
@@ -131,10 +101,6 @@ public class MrpService {
         });
     }
 
-    /**
-     * Netiranje - računa neto potrebe.
-     * Formula: Neto = Bruto - (Zaliha - SafetyStock)
-     */
     private Map<Long, NetRequirement> calculateNetRequirements(
             Map<Long, BomRequirement> grossRequirements) {
 
@@ -147,17 +113,14 @@ public class MrpService {
             Item item = itemRepository.findById(itemId).orElse(null);
             if (item == null) continue;
 
-            // Dohvati zalihe
             Double onHand = inventoryRepository.findByItemId(itemId)
                     .map(Inventory::getAvailableQuantity)
                     .orElse(0.0);
 
             Double safetyStock = item.getSafetyStock();
 
-            // Neto = Bruto - (OnHand - SafetyStock)
             Double netQty = gross.getQuantity() - (onHand - safetyStock);
 
-            // Ako je neto > 0, imamo potrebu
             if (netQty > 0) {
                 netRequirements.put(itemId, new NetRequirement(
                         item,
@@ -172,9 +135,6 @@ public class MrpService {
         return netRequirements;
     }
 
-    /**
-     * Lead Time Offsetting + Generisanje PlannedOrder zapisa.
-     */
     private List<PlannedOrder> generatePlannedOrders(
             Map<Long, NetRequirement> netRequirements, ProductionPlan plan) {
 
@@ -183,15 +143,12 @@ public class MrpService {
         for (NetRequirement req : netRequirements.values()) {
             Item item = req.getItem();
 
-            // Izračunaj datum početka (Lead Time Offsetting)
             LocalDate startDate = req.getDueDate().minusDays(item.getLeadTimeDays());
 
-            // Odredi tip naloga na osnovu kategorije artikla
             OrderType orderType;
             if (item.getCategory() == ItemCategory.RAW_MATERIAL) {
                 orderType = OrderType.PURCHASE;
             } else {
-                // SEMI_FINISHED i FINISHED_PRODUCT se proizvode
                 orderType = OrderType.PRODUCTION;
             }
 
@@ -211,43 +168,26 @@ public class MrpService {
         return orders;
     }
 
-    /**
-     * Vraća sve PLANNED naloge za nabavku (lista za kupovinu).
-     */
     @Transactional(readOnly = true)
     public List<PlannedOrder> getPurchaseOrders() {
-        return plannedOrderRepository.findPurchaseOrdersToProcess();
+        return plannedOrderRepository.findByOrderType(OrderType.PURCHASE);
     }
 
-    /**
-     * Vraća sve PLANNED naloge za proizvodnju.
-     */
     @Transactional(readOnly = true)
     public List<PlannedOrder> getProductionOrders() {
-        return plannedOrderRepository.findProductionOrdersToProcess();
+        return plannedOrderRepository.findByOrderType(OrderType.PRODUCTION);
     }
 
-    /**
-     * Vraća sve naloge za određeni ProductionPlan.
-     */
     @Transactional(readOnly = true)
     public List<PlannedOrder> getOrdersByPlan(Long planId) {
         return plannedOrderRepository.findByProductionPlanId(planId);
     }
 
-    /**
-     * Vraća naloge u zadatom vremenskom periodu.
-     */
     @Transactional(readOnly = true)
     public List<PlannedOrder> getOrdersByDateRange(LocalDate startDate, LocalDate endDate) {
         return plannedOrderRepository.findByStartDateBetween(startDate, endDate);
     }
 
-    // ============ Pomoćne klase ============
-
-    /**
-     * Bruto potreba iz BOM eksplozije.
-     */
     public static class BomRequirement {
         private Long itemId;
         private Double quantity;
@@ -269,9 +209,6 @@ public class MrpService {
         public void setDueDate(LocalDate dueDate) { this.dueDate = dueDate; }
     }
 
-    /**
-     * Neto potreba nakon netiranja.
-     */
     public static class NetRequirement {
         private Item item;
         private Double grossQuantity;
@@ -295,9 +232,6 @@ public class MrpService {
         public LocalDate getDueDate() { return dueDate; }
     }
 
-    /**
-     * Rezultat MRP kalkulacije.
-     */
     public static class MrpResult {
         private ProductionPlan plan;
         private List<PlannedOrder> generatedOrders;

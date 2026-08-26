@@ -42,7 +42,6 @@ public class MrpController {
         return ResponseEntity.ok(orders);
     }
 
-
     @GetMapping("/orders/production")
     public ResponseEntity<List<PlannedOrderDTO>> getProductionOrders() {
         List<PlannedOrderDTO> orders = mrpService.getProductionOrders().stream()
@@ -50,7 +49,6 @@ public class MrpController {
                 .collect(Collectors.toList());
         return ResponseEntity.ok(orders);
     }
-
 
     @GetMapping("/orders/plan/{planId}")
     public ResponseEntity<List<PlannedOrderDTO>> getOrdersByPlan(@PathVariable Long planId) {

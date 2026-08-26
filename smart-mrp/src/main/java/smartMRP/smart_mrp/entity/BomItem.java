@@ -4,11 +4,6 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 
-/**
- * Bill of Materials (Sastavnica).
- * Definiše vezu roditelj-komponenta sa potrebnom količinom.
- * Npr: 1 Sto (roditelj) sadrži 4 Noge (komponenta) sa količinom 4.
- */
 @Entity
 @Table(name = "bom_items", uniqueConstraints = {
     @UniqueConstraint(columnNames = {"parent_item_id", "component_item_id"})

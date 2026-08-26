@@ -24,3 +24,22 @@ export interface PlannedOrder {
   status: OrderStatus;
   createdAt: string;
 }
+
+export interface InventoryOperation {
+  operationType: string;
+  itemId: number;
+  itemSku: string;
+  itemName: string;
+  quantity: number;
+  description: string;
+}
+
+export interface StatusUpdateResponse {
+  orderId: number;
+  previousStatus: OrderStatus;
+  newStatus: OrderStatus;
+  orderType: OrderType;
+  inventoryOperations: InventoryOperation[];
+  success: boolean;
+  message: string;
+}

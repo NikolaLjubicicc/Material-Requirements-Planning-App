@@ -5,10 +5,6 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
-/**
- * Artikal - osnovni entitet sistema.
- * Predstavlja sirovinu, poluproizvod ili gotov proizvod.
- */
 @Entity
 @Table(name = "items")
 public class Item {

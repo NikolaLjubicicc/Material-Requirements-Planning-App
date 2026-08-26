@@ -1,4 +1,4 @@
-/* Angular Material Theme */
+
 @use '@angular/material' as mat;
 
 @include mat.core();
@@ -17,7 +17,6 @@ $smart-mrp-theme: mat.define-light-theme((
 
 @include mat.all-component-themes($smart-mrp-theme);
 
-/* Global styles */
 html, body {
   height: 100%;
 }
@@ -27,7 +26,6 @@ body {
   font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
-/* Status colors */
 .status-pending {
   color: #FFC107;
 }
@@ -44,7 +42,6 @@ body {
   color: #9E9E9E;
 }
 
-/* Order type colors */
 .order-purchase {
   color: #FF9800;
 }
@@ -53,7 +50,6 @@ body {
   color: #9C27B0;
 }
 
-/* Utility classes */
 .text-danger {
   color: #F44336;
 }
@@ -83,7 +79,6 @@ body {
 .ml-1 { margin-left: 8px; }
 .mr-1 { margin-right: 8px; }
 
-/* Snackbar styles */
 .snackbar-success {
   --mdc-snackbar-container-color: #4CAF50;
   --mdc-snackbar-supporting-text-color: white;

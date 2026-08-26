@@ -1,6 +1,5 @@
 package smartMRP.smart_mrp.exception;
 
-
 public class ResourceNotFoundException extends RuntimeException {
 
     public ResourceNotFoundException(String resourceName, Long id) {
