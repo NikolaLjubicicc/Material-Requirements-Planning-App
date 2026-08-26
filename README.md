@@ -1,73 +1,73 @@
 # Smart MRP
 
-Sistem za planiranje materijalnih potreba (Material Requirements Planning). Ovo je projekat koji simulira jedan realan proces koji se koristi u proizvodnim firmama: kako da na osnovu plana proizvodnje i trenutnih zaliha automatski izračunaš šta treba naručiti od dobavljača, a šta treba proizvesti u sopstvenoj fabrici, i kada tačno treba krenuti sa tim da bi se stiglo do roka.
+Sistem za planiranje materijalnih potreba (Material Requirements Planning). Aplikacija automatizuje proces koji se koristi u proizvodnim preduzećima: na osnovu plana proizvodnje i trenutnog stanja zaliha izračunava koje sirovine treba nabaviti, šta treba proizvesti, i kada tačno treba pokrenuti nabavku odnosno proizvodnju da bi se ispoštovao rok.
 
-Aplikacija ima dva dela:
+Aplikacija se sastoji iz dva dela:
 
-- **Backend** (folder `smart-mrp`) - Spring Boot aplikacija koja radi svu logiku i čuva podatke u bazi.
-- **Frontend** (folder `Frontend`) - Angular aplikacija koja služi kao korisnički interfejs preko koga se sve to koristi u browseru.
+- **Backend** (folder `smart-mrp`) - Spring Boot aplikacija koja sadrži celokupnu poslovnu logiku i komunicira sa bazom podataka.
+- **Frontend** (folder `Frontend`) - Angular aplikacija koja predstavlja korisnički interfejs.
 
-Ova dva dela pričaju preko REST API-ja (obično JSON preko HTTP-a).
+Komunikacija između ova dva dela odvija se preko REST API-ja, razmenom JSON podataka putem HTTP protokola.
 
 ---
 
-## 1. Šta MRP zapravo radi (kratko objašnjenje za nekog ko nije iz proizvodnje)
+## 1. MRP algoritam
 
-Zamisli da praviš stolove. Da bi napravio jedan sto, treba ti npr. 1 okvir i 4 noge. Da bi napravio okvir, treba ti 2 čelične ploče i 1 set vijaka. To je **sastavnica** (BOM - Bill of Materials), i to je u suštini stablo: proizvod se sastoji od komponenti, a komponente se mogu sastojati od svojih komponenti.
+Osnovni koncept na kome počiva sistem jeste **sastavnica** (BOM - Bill of Materials): svaki proizvod se sastoji od određenih komponenti, a te komponente mogu, dalje, imati sopstvene komponente. Time se formira hijerarhijska struktura (stablo), na primer gotov proizvod se sastoji od poluproizvoda, a poluproizvod se sastoji od sirovina.
 
-Kad dobiješ narudžbinu "napravi 5 stolova do 1. marta", MRP algoritam radi tri stvari:
+Kada se u sistem unese plan proizvodnje (recimo, potrebno je proizvesti određenu količinu gotovog proizvoda do zadatog roka), MRP algoritam sprovodi tri koraka:
 
-1. **Eksplozija BOM-a (Explosion)** - rekurzivno silazi kroz sastavnicu i računa bruto potrebe. Za 5 stolova treba mi 5 okvira i 20 nogu. Za 5 okvira treba mi 10 čeličnih ploča i 5 setova vijaka.
-2. **Netiranje (Netting)** - od bruto potrebe se oduzima ono što već imam na stanju (iznad sigurnosne zalihe koju uvek želim da čuvam u rezervi). Ako imam 10 čeličnih ploča na stanju, a treba mi 10, neto potreba je 0, ne moram ništa da naručim.
-3. **Lead Time Offsetting** - za sve što fali, računa se kada tačno treba krenuti sa nabavkom ili proizvodnjom, na osnovu toga koliko dana traje da se ta stavka nabavi/proizvede (lead time). Ako mi rok stiže 1. marta, a nabavka traje 7 dana, nalog za nabavku mora da krene najkasnije 22. februara.
+1. **Eksplozija BOM-a (Explosion)** - rekurzivnim obilaskom sastavnice izračunavaju se bruto potrebe za svakom komponentom, na svim nivoima hijerarhije.
+2. **Netiranje (Netting)** - od bruto potrebe se oduzima raspoloživa zaliha, umanjena za sigurnosnu zalihu koja se uvek zadržava kao rezerva. Ukoliko je zaliha dovoljna, neto potreba iznosi nula i ne generiše se nalog.
+3. **Lead Time Offsetting** - za preostale (neto) potrebe računa se datum kada nabavka ili proizvodnja mora da počne, na osnovu vremena trajanja nabavke odnosno proizvodnje (lead time), tako da se stavka dobije tačno na vreme.
 
-Rezultat cele te kalkulacije su **planirani nalozi** (Planned Orders) - lista konkretnih naloga tipa "naruči X komada od dobavljača" (PURCHASE) ili "proizvedi X komada u fabrici" (PRODUCTION), svaki sa svojim datumom početka i rokom.
+Rezultat kalkulacije je lista **planiranih naloga** (Planned Orders) - naloga tipa nabavka (PURCHASE) ili proizvodnja (PRODUCTION), svaki sa definisanim datumom početka i rokom završetka.
 
-Formula za netiranje, malo formalnije:
+Formula netiranja:
 
 ```
 Neto potreba = Bruto potreba - (Zaliha na stanju - Sigurnosna zaliha)
-Ako je rezultat manji od 0, neto potreba se postavlja na 0 (ne moze se naruciti negativna kolicina)
+Ako je rezultat manji od 0, neto potreba se postavlja na 0.
 ```
 
 ---
 
-## 2. Tehnologije koje su korišćene
+## 2. Korišćene tehnologije
 
 ### Backend
 - **Java 17**
 - **Spring Boot 4** (Spring Web, Spring Data JPA, Spring Validation)
-- **PostgreSQL** kao baza podataka
-- **Maven** za build (koristi se Maven Wrapper, `mvnw`, tako da ne mora da se instalira Maven ručno)
+- **PostgreSQL** kao sistem za upravljanje bazom podataka
+- **Maven** za upravljanje zavisnostima i build proces (koristi se Maven Wrapper, `mvnw`, pa lokalna instalacija Maven-a nije neophodna)
 
 ### Frontend
 - **Angular 16**
-- **Angular Material** za UI komponente (tabele, dijalozi, dugmad, forme...)
-- **RxJS** za rad sa asinhronim pozivima ka backendu (Observable umesto Promise)
+- **Angular Material** za UI komponente (tabele, dijalozi, forme, dugmad)
+- **RxJS** za rad sa asinhronim pozivima ka backendu
 - **TypeScript**
 
-Razlog za ovu kombinaciju je prilično standardan izbor za enterprise aplikacije: Spring Boot je industrijski standard za Java backend, JPA/Hibernate rešava mapiranje objekata na tabele u bazi bez ručnog pisanja SQL-a za svaku operaciju, a Angular sa Material bibliotekom daje gotov, konzistentan izgled bez da se piše CSS za svaki dugme i svaku tabelu od nule.
+Izbor tehnologija odgovara uobičajenoj enterprise arhitekturi: Spring Boot je standardno rešenje za Java backend servise, JPA/Hibernate uklanja potrebu za ručnim pisanjem SQL upita za osnovne operacije nad bazom, dok Angular u kombinaciji sa Material bibliotekom obezbeđuje konzistentan korisnički interfejs bez potrebe za pisanjem CSS-a od nule.
 
 ---
 
 ## 3. Arhitektura backend-a
 
-Kod je organizovan po slojevima, što je standardan pristup u Spring Boot projektima:
+Kod je organizovan po slojevima, u skladu sa uobičajenom praksom u Spring Boot aplikacijama:
 
 ```
 smartMRP.smart_mrp/
-├── entity/       -> JPA entiteti, klase koje se direktno mapiraju na tabele u bazi
-├── repository/   -> Spring Data JPA interfejsi za upit nad bazom (bez pisanja SQL-a)
-├── service/      -> biznis logika, tu se nalazi ceo MRP algoritam
-├── controller/   -> REST kontroleri, definišu API endpointe koje frontend poziva
-├── dto/          -> Data Transfer Object klase, ono što se stvarno šalje kroz API
-├── exception/    -> custom izuzeci (npr. kad artikal ne postoji, ili nema dovoljno zalihe)
+├── entity/       -> JPA entiteti, klase koje se mapiraju na tabele u bazi
+├── repository/   -> Spring Data JPA interfejsi za pristup bazi
+├── service/      -> poslovna logika, uključujući kompletan MRP algoritam
+├── controller/   -> REST kontroleri koji definišu API endpointe
+├── dto/          -> Data Transfer Object klase koje se razmenjuju kroz API
+├── exception/    -> custom izuzeci (npr. artikal ne postoji, nedovoljna zaliha)
 └── config/       -> konfiguracija (CORS)
 ```
 
-Zašto DTO umesto da se entiteti direktno vraćaju kroz API? Zato što entiteti imaju JPA relacije (`@ManyToOne`, `@OneToMany`) koje mogu da naprave beskonačnu petlju kad Jackson pokuša da ih pretvori u JSON, i zato što ne želiš da klijent vidi baš sve što imaš u bazi. DTO je "čista" klasa koja nosi samo ono što je frontendu stvarno potrebno.
+DTO klase se koriste umesto direktnog vraćanja entiteta kroz API iz dva razloga: entiteti sadrže JPA relacije (`@ManyToOne`, `@OneToMany`) koje mogu prouzrokovati beskonačnu petlju prilikom serijalizacije u JSON, i nije poželjno da klijent ima uvid u kompletnu internu strukturu podataka. DTO predstavlja klasu koja nosi isključivo podatke koji su frontendu potrebni.
 
-Primer, `Item` entitet ima ovako nešto:
+Primer entiteta `Item`:
 
 ```java
 @Entity
@@ -90,7 +90,7 @@ public class Item {
 }
 ```
 
-A `ItemDTO` samo uzme te podatke i vrati ih kao običan JSON, bez ikakvih JPA magija:
+Odgovarajući `ItemDTO` sadrži samo podatke koji se prosleđuju kroz API, bez JPA specifičnosti:
 
 ```java
 public record ItemDTO(
@@ -112,21 +112,21 @@ public record ItemDTO(
 }
 ```
 
-### Glavni entiteti u bazi
+### Glavni entiteti
 
-| Entitet | Šta predstavlja |
+| Entitet | Opis |
 |---|---|
 | `Item` | Artikal - sirovina, poluproizvod ili gotov proizvod |
-| `BomItem` | Jedan red u sastavnici - "za 1 komad roditelja treba X komada komponente" |
-| `Inventory` | Trenutno stanje zaliha za jedan artikal (na stanju / rezervisano) |
-| `ProductionPlan` | Plan proizvodnje - "treba mi X komada artikla Y do datuma Z" |
-| `PlannedOrder` | Nalog koji je generisao MRP - nabavka ili proizvodnja, sa statusom |
+| `BomItem` | Jedan red sastavnice - definiše koliko jedinica komponente je potrebno za jednu jedinicu roditeljskog artikla |
+| `Inventory` | Trenutno stanje zaliha za artikal (količina na stanju i rezervisana količina) |
+| `ProductionPlan` | Plan proizvodnje - definiše traženu količinu artikla i rok |
+| `PlannedOrder` | Nalog generisan MRP kalkulacijom - nabavka ili proizvodnja, sa svojim statusom |
 
-`Item` ima kategoriju (`ItemCategory`): `RAW_MATERIAL` (sirovina, uvek ide u nabavku), `SEMI_FINISHED` (poluproizvod, uvek se proizvodi) ili `FINISHED_PRODUCT` (gotov proizvod, takođe se proizvodi). Na osnovu ove kategorije MRP servis odlučuje da li generiše `PURCHASE` ili `PRODUCTION` nalog.
+Svaki `Item` ima kategoriju (`ItemCategory`): `RAW_MATERIAL` (sirovina, uvek se nabavlja), `SEMI_FINISHED` (poluproizvod, uvek se proizvodi) i `FINISHED_PRODUCT` (gotov proizvod, takođe se proizvodi). Na osnovu ove kategorije MRP servis određuje da li generiše `PURCHASE` ili `PRODUCTION` nalog.
 
-### Kako izgleda sam MRP algoritam u kodu
+### Implementacija MRP algoritma
 
-Srce cele aplikacije je `MrpService`. Eksplozija BOM-a je klasična rekurzija:
+Centralna klasa je `MrpService`. Eksplozija BOM-a je implementirana kao rekurzivna funkcija:
 
 ```java
 private void explodeBom(Long itemId, Double quantity, LocalDate dueDate,
@@ -140,61 +140,60 @@ private void explodeBom(Long itemId, Double quantity, LocalDate dueDate,
 
         addRequirement(requirements, componentId, requiredQty, dueDate);
 
-        // ide dalje na dete ove komponente, ako i ona ima svoj BOM
         explodeBom(componentId, requiredQty, dueDate, requirements);
     }
 }
 ```
 
-Svaki poziv silazi jedan nivo dublje u sastavnicu, sve dok ne stigne do sirovina koje više nemaju svoj BOM. Kad se sve potrebe skupe, ide netiranje (oduzimanje zaliha) i na kraju se za svaku stavku koja je ostala kreira `PlannedOrder`.
+Svaki poziv silazi jedan nivo dublje u sastavnicu, sve dok se ne dođe do sirovina koje više nemaju sopstveni BOM. Nakon što se prikupe sve bruto potrebe, sprovodi se netiranje, a zatim se za svaku preostalu (neto) potrebu kreira `PlannedOrder`.
 
-### Status naloga i automatska promena zaliha
+### Status naloga i automatsko ažuriranje zaliha
 
-Kad korisnik ručno promeni status nekog `PlannedOrder`-a (npr. iz `PLANNED` u `RELEASED`), aplikacija automatski radi odgovarajuću operaciju nad zalihama, da korisnik ne mora sam da ažurira brojeve. Dozvoljeni prelazi statusa su:
+Prilikom promene statusa `PlannedOrder`-a (npr. iz `PLANNED` u `RELEASED`), sistem automatski izvršava odgovarajuću operaciju nad zalihama, bez potrebe za ručnim ažuriranjem od strane korisnika. Dozvoljeni prelazi statusa:
 
 ```
 PLANNED     -> RELEASED, CANCELLED
 RELEASED    -> IN_PROGRESS, CANCELLED
 IN_PROGRESS -> COMPLETED, CANCELLED
-COMPLETED   -> (kraj, nema dalje)
-CANCELLED   -> (kraj, nema dalje)
+COMPLETED   -> (terminalni status)
+CANCELLED   -> (terminalni status)
 ```
 
-Šta se dešava sa zalihama u pozadini, u zavisnosti od tipa naloga:
+Operacije nad zalihama u zavisnosti od tipa naloga i prelaza statusa:
 
-| Tip naloga | Prelaz statusa | Šta se radi sa zalihama |
+| Tip naloga | Prelaz statusa | Operacija nad zalihama |
 |---|---|---|
-| PURCHASE | -> COMPLETED | Roba stiže, `quantityOnHand` se povećava |
-| PRODUCTION | -> RELEASED | Rezervišu se komponente iz BOM-a (`reservedQuantity` raste) |
-| PRODUCTION | -> IN_PROGRESS | Komponente se stvarno izdaju (skida se i sa stanja i iz rezervacije) |
-| PRODUCTION | -> COMPLETED | Gotov proizvod ulazi na stanje |
-| PRODUCTION | RELEASED -> CANCELLED | Rezervacija komponenti se oslobađa |
+| PURCHASE | -> COMPLETED | Prijem robe, `quantityOnHand` se uvećava |
+| PRODUCTION | -> RELEASED | Rezervacija komponenti iz BOM-a, `reservedQuantity` se uvećava |
+| PRODUCTION | -> IN_PROGRESS | Izdavanje komponenti u proizvodnju (umanjuje se i stanje i rezervacija) |
+| PRODUCTION | -> COMPLETED | Prijem gotovog proizvoda na stanje |
+| PRODUCTION | RELEASED -> CANCELLED | Oslobađanje rezervacije komponenti |
 
-Ovo je urađeno u `PlannedOrderService.updateStatus()`, tako da se cela ta logika nalazi na jednom mestu i sve je unutar jedne transakcije (ili sve prođe, ili ništa).
+Ova logika je implementirana u `PlannedOrderService.updateStatus()`, tako da se sve operacije izvršavaju unutar jedne transakcije - ili se sve uspešno završi, ili se sve poništava.
 
 ---
 
 ## 4. Arhitektura frontend-a
 
-Angular projekat je standalone (bez starih NgModule-ova), organizovan po feature-ima:
+Angular projekat koristi standalone komponente (bez NgModule-a) i organizovan je po funkcionalnim celinama:
 
 ```
 src/app/
 ├── core/
-│   ├── models/        -> TypeScript interfejsi koji odgovaraju backend DTO-ovima
-│   └── services/       -> servisi koji zovu backend API preko HttpClient-a
+│   ├── models/         -> TypeScript interfejsi koji odgovaraju backend DTO-ovima
+│   └── services/        -> servisi koji pozivaju backend API preko HttpClient-a
 ├── shared/
-│   └── components/     -> komponente koje se koriste na više mesta (npr. layout sa sidebar-om)
+│   └── components/      -> komponente koje se koriste na više mesta (npr. layout sa navigacijom)
 └── features/
-    ├── items/           -> artikli
-    ├── bom/             -> sastavnice
-    ├── inventory/        -> zalihe
-    ├── production-plans/  -> planovi proizvodnje
-    ├── mrp/              -> pokretanje MRP-a i pregled naloga
-    └── dashboard/         -> početna stranica
+    ├── items/            -> artikli
+    ├── bom/              -> sastavnice
+    ├── inventory/         -> zalihe
+    ├── production-plans/   -> planovi proizvodnje
+    ├── mrp/               -> pokretanje MRP kalkulacije i pregled naloga
+    └── dashboard/          -> početna stranica
 ```
 
-Svaki servis je tanka omotnica oko `HttpClient`-a. Na primer `MrpService`:
+Servisi predstavljaju tanak sloj iznad `HttpClient`-a. Primer `MrpService`:
 
 ```typescript
 @Injectable({ providedIn: 'root' })
@@ -213,31 +212,31 @@ export class MrpService {
 }
 ```
 
-Komponenta se onda samo pretplati na taj Observable i prikaže rezultat, ili obradi grešku ako nešto pukne (npr. nedovoljna zaliha, backend to vraća kao 400 sa porukom).
+Komponenta se pretplaćuje na vraćeni Observable i prikazuje rezultat, odnosno obrađuje grešku ukoliko zahtev ne uspe (na primer, backend vraća status 400 sa porukom u slučaju nedovoljne zalihe).
 
 ---
 
-## 5. Kako pokrenuti aplikaciju
+## 5. Pokretanje aplikacije
 
-Treba ti instalirano:
+Preduslovi:
 
-- **Java 17** (ili noviji)
-- **Node.js** (18+, testirano na novijim verzijama) i npm
-- **PostgreSQL** (lokalno pokrenut server)
+- **Java 17** ili novija verzija
+- **Node.js** (18+) i npm
+- **PostgreSQL** server, lokalno pokrenut
 
-Frontend i backend se pokreću odvojeno, u dva terminala.
+Backend i frontend se pokreću odvojeno, u dva terminala.
 
-### Korak 1: priprema baze
+### Korak 1: Priprema baze podataka
 
-Kreiraj bazu koja se zove `mrp_db` (ime mora tačno tako da se zove, ili moraš da izmeniš konfiguraciju u koraku 2):
+Potrebno je kreirati bazu pod nazivom `mrp_db`:
 
 ```bash
 psql -U postgres -c "CREATE DATABASE mrp_db;"
 ```
 
-Ne treba ručno praviti tabele. Hibernate to radi sam pri pokretanju backenda (`ddl-auto=update` u konfiguraciji), na osnovu `@Entity` klasa.
+Tabele se ne kreiraju ručno - Hibernate ih automatski generiše prilikom pokretanja backenda (opcija `ddl-auto=update`), na osnovu definisanih `@Entity` klasa.
 
-### Korak 2: konfiguracija backenda (ako treba)
+### Korak 2: Konfiguracija backenda
 
 Fajl `smart-mrp/src/main/resources/application.properties`:
 
@@ -248,22 +247,20 @@ spring.datasource.password=postgres
 server.port=8081
 ```
 
-Ako ti se korisničko ime/lozinka za Postgres razlikuju, izmeni ovde pre pokretanja.
+Ukoliko se korisničko ime ili lozinka za PostgreSQL razlikuju od podrazumevanih, potrebno je izmeniti ove vrednosti pre pokretanja.
 
-### Korak 3: pokretanje backenda
+### Korak 3: Pokretanje backenda
 
-Iz foldera `smart-mrp` (onaj koji sadrži `pom.xml`):
+Iz foldera `smart-mrp` (folder koji sadrži `pom.xml`):
 
 ```bash
 cd smart-mrp
 ./mvnw spring-boot:run
 ```
 
-Na Windows-u koristiš `mvnw.cmd` umesto `./mvnw`, ili prosto `mvnw spring-boot:run` u cmd/PowerShell-u. Backend će se pokrenuti na `http://localhost:8081`.
+Na operativnom sistemu Windows koristi se `mvnw.cmd` umesto `./mvnw`. Backend se pokreće na adresi `http://localhost:8081`. Poruka `Started SmartMrpApplication` u konzoli označava da je aplikacija spremna za prijem zahteva.
 
-Kad se ispiše nešto tipa `Started SmartMrpApplication`, backend radi i spreman je da prima zahteve.
-
-### Korak 4: pokretanje frontenda
+### Korak 4: Pokretanje frontenda
 
 Iz foldera `Frontend`:
 
@@ -273,45 +270,50 @@ npm install
 npm start
 ```
 
-`npm install` treba samo prvi put (ili kad se promene dependency-ji). `npm start` pokreće Angular dev server, obično na `http://localhost:4200`. Otvoriš taj link u browseru i to je to.
+Komandu `npm install` je potrebno izvršiti samo prilikom prvog pokretanja, odnosno nakon promene zavisnosti. Komanda `npm start` pokreće Angular development server, podrazumevano na adresi `http://localhost:4200`.
 
-Frontend je već podešen da priča sa backendom na `http://localhost:8081/api` (fajl `src/environments/environment.ts`), tako da ne treba ništa dodatno da se menja ako si ostavio podrazumevani port.
+Frontend je unapred konfigurisan da komunicira sa backendom na adresi `http://localhost:8081/api` (fajl `src/environments/environment.ts`), tako da dodatna podešavanja nisu potrebna ukoliko se koriste podrazumevani portovi.
 
 ### Redosled pokretanja
 
-Prvo backend, pa frontend. Ako pokreneš frontend pre backenda, aplikacija će se učitati ali pozivi ka API-ju će failovati dok ne upališ backend - to je normalno, samo osveži stranicu kad backend upali.
+Backend je potrebno pokrenuti pre frontenda. Ukoliko se frontend pokrene prvi, aplikacija će se učitati, ali pozivi ka API-ju neće uspeti dok backend ne bude aktivan - u tom slučaju je dovoljno osvežiti stranicu nakon pokretanja backenda.
 
 ---
 
-## 6. Kako se aplikacija koristi (tipičan scenario)
+## 6. Tipičan scenario korišćenja
 
-1. Otvoriš **Artikli** i kreiraš par artikala - recimo sirovinu (čelik), poluproizvod (okvir) i gotov proizvod (sto).
-2. Odeš na **Sastavnice (BOM)** i povežeš ih - sto se sastoji od 1 okvira i 4 noge, okvir se sastoji od 2 čelične ploče itd.
-3. U **Zalihama** postaviš koliko trenutno imaš na stanju od svake sirovine.
-4. U **Planovi proizvodnje** kreiraš plan - "treba mi 5 stolova do 1. marta".
-5. Odeš na **MRP** i pokreneš kalkulaciju za taj plan. Sistem ti generiše listu naloga - šta treba naručiti, šta proizvesti, i kada tačno treba krenuti sa svakim.
-6. Kroz **Planirane naloge** pratiš i menjaš status svakog naloga kako napreduje (poručeno, u toku, završeno), a zalihe se ažuriraju same u pozadini.
+1. U sekciji **Artikli** kreiraju se artikli - na primer sirovina, poluproizvod i gotov proizvod.
+2. U sekciji **Sastavnice (BOM)** definišu se odnosi između artikala - od kojih komponenti se sastoji gotov proizvod, i u kojim količinama.
+3. U sekciji **Zalihe** unosi se trenutno stanje na skladištu za svaku sirovinu.
+4. U sekciji **Planovi proizvodnje** kreira se plan sa traženom količinom gotovog proizvoda i rokom.
+5. U sekciji **MRP** pokreće se kalkulacija za dati plan. Sistem generiše listu naloga - šta treba nabaviti, šta proizvesti, i kada je potrebno pokrenuti svaki od njih.
+6. Kroz sekciju **Planirani nalozi** prati se i menja status svakog naloga (poručeno, u toku, završeno), pri čemu se zalihe automatski ažuriraju u pozadini.
 
 ---
 
-## 7. Kratak pregled API-ja
+## 7. Pregled API-ja
 
-Baza URL-a je `http://localhost:8081/api`. Par najbitnijih poziva:
+Osnovni URL: `http://localhost:8081/api`. Najvažniji pozivi:
 
 ```
-POST /api/mrp/run/{planId}          - pokreće MRP kalkulaciju za dati plan
+POST /api/mrp/run/{planId}          - pokretanje MRP kalkulacije za dati plan
 GET  /api/mrp/orders/purchase       - svi nalozi za nabavku
 GET  /api/mrp/orders/production     - svi nalozi za proizvodnju
-PUT  /api/mrp/orders/{id}/status    - promena statusa naloga (auto azurira zalihe)
+PUT  /api/mrp/orders/{id}/status    - promena statusa naloga (automatski ažurira zalihe)
 
 GET  /api/items                     - svi artikli
 POST /api/items                     - kreiranje artikla
 
-GET  /api/bom/parent/{parentId}     - komponente za dati artikal
+GET  /api/bom/parent/{parentId}     - komponente datog artikla
 
 GET  /api/inventory                 - stanje zaliha
 POST /api/inventory/item/{id}/add   - prijem robe na stanje
 ```
 
-Kompletna lista endpointa (sa primerima request/response tela) nalazi se u [ANGULAR_FRONTEND_INSTRUKCIJE.md](ANGULAR_FRONTEND_INSTRUKCIJE.md), a detaljan opis svakog sloja backenda u [CLAUDE_CONTEXT.md](CLAUDE_CONTEXT.md).
+Kompletna specifikacija endpointa, sa primerima request i response tela, nalazi se u [ANGULAR_FRONTEND_INSTRUKCIJE.md](ANGULAR_FRONTEND_INSTRUKCIJE.md). Detaljan opis svakog sloja backenda dat je u [CLAUDE_CONTEXT.md](CLAUDE_CONTEXT.md).
 
+---
+
+## 8. Napomena o kodu
+
+Kod ne sadrži komentare - imena klasa, metoda i promenljivih su birana tako da samostalno opisuju svrhu (npr. `explodeBom`, `calculateNetRequirements`, `reserveComponents`), čime je potreba za dodatnim komentarima izbegnuta.
