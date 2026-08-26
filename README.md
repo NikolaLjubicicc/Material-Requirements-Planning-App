@@ -315,8 +315,3 @@ POST /api/inventory/item/{id}/add   - prijem robe na stanje
 
 Kompletna lista endpointa (sa primerima request/response tela) nalazi se u [ANGULAR_FRONTEND_INSTRUKCIJE.md](ANGULAR_FRONTEND_INSTRUKCIJE.md), a detaljan opis svakog sloja backenda u [CLAUDE_CONTEXT.md](CLAUDE_CONTEXT.md).
 
----
-
-## 8. Napomena o kodu
-
-U kodu namerno nema komentara - sav kod je pisan tako da imena klasa, metoda i promenljivih sama objašnjavaju šta rade (npr. `explodeBom`, `calculateNetRequirements`, `reserveComponents`), pa dodatni komentari nisu bili potrebni. Ako nešto nije jasno iz imena, to je znak da bi možda trebalo preimenovati, a ne dokomentarisati.
